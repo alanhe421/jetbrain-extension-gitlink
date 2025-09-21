@@ -33,5 +33,5 @@ object GitLinkBundle : DynamicBundle(BUNDLE) {
         BrowserLauncher.instance.open("https://github.com/ben-gibson/GitLink")
     }
 
-    fun plugin() = PluginManagerCore.getPlugin(PluginId.getId("uk.co.ben-gibson.remote.repository.mapper"))
+    fun plugin() = PluginManagerCore.getPlugin(PluginId.getId("cn.alanhe.plugin.beautiful-gitlink"))
 }

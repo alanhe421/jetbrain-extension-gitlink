@@ -1,6 +1,6 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
-    <id>uk.co.ben-gibson.remote.repository.mapper</id>
+    <id>cn.alanhe.plugin.beautiful-gitlink</id>
     <name>Beautiful GitLink</name>
     <vendor url="https://github.com/alanhe421">Alan He</vendor>
     <depends>com.intellij.modules.platform</depends>
