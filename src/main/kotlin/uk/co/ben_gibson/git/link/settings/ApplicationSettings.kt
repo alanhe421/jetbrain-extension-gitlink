@@ -1,6 +1,7 @@
 package uk.co.ben_gibson.git.link.settings
 
 import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.RoamingType
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.util.xmlb.XmlSerializerUtil
@@ -12,8 +13,11 @@ import java.util.UUID
  * Supports storing the application settings in a persistent way.
  * The [State] and [Storage] annotations define the name of the data and the file name where
  * these persistent application settings are stored.
+ *
+ * Settings are configured to sync across IDEs when JetBrains Settings Sync is enabled.
+ * Users can control sync participation through the enableSync setting.
  */
-@State(name = "uk.co.ben_gibson.git.link.SettingsState", storages = [Storage("GitLink.xml")])
+@State(name = "uk.co.ben_gibson.git.link.SettingsState", storages = [Storage(value = "GitLink.xml", roamingType = RoamingType.DEFAULT)])
 class ApplicationSettings : PersistentStateComponent<ApplicationSettings?> {
     private var listeners: List<ChangeListener> = listOf()
 
