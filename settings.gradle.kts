@@ -1,1 +1,1 @@
-rootProject.name = "GitLink"
+rootProject.name = "Beautiful GitLink"
