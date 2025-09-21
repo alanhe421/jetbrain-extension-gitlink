@@ -115,7 +115,7 @@ class TGit : Platform(
     UUID.fromString("a1b2c3d4-e5f6-7890-abcd-ef1234567890"),
     message("platform.tgit.name"),
     Icons.TGIT,
-    setOf(),
+    setOf(Host("git.code.tencent.com"), Host("git.woa.com")),
     Pattern.compile(".*tgit.*", Pattern.CASE_INSENSITIVE)
 )
 

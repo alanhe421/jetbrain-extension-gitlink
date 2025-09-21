@@ -77,10 +77,11 @@ data class UrlTemplates(val fileAtBranch: String, val fileAtCommit : String, val
             )
         }
 
+        // https://git.code.tencent.com/ChainMaker/chainmaker-smartplugin/blob/master/development/manifest.js
         fun tgit(): UrlTemplates {
             return UrlTemplates(
-                "{remote:url}/blob/{branch}/{file:path}/{file:name}{line-block:start}#L{line:start}{line-block:end}",
-                "{remote:url}/blob/{commit}/{file:path}/{file:name}{line-block:start}#L{line:start}{line-block:end}",
+                "{remote:url}/{object}/{branch}/{file:path}/{file:name}{line-block:start}#L{line:start}{line-block:end}",
+                "{remote:url}/{object}/{commit}/{file:path}/{file:name}{line-block:start}#L{line:start}{line-block:end}",
                 "{remote:url}/commit/{commit}"
             )
         }
