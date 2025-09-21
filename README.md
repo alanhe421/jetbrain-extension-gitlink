@@ -1,4 +1,4 @@
-# GitLink
+# Beautiful GitLink
 
 ![Build](https://github.com/ben-gibson/GitLink/workflows/Build/badge.svg)
 [![Version](https://img.shields.io/jetbrains/plugin/v/8183-gitlink.svg)](https://plugins.jetbrains.com/plugin/8183-gitlink)
