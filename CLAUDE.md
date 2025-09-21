@@ -85,3 +85,4 @@ The plugin is configured via `plugin.xml` and registers:
 - Uses custom URL library (`libs/url-0.0.11.jar`)
 - JVM target: Java 17
 - Platform: IntelliJ Community 2023.3.7+
+- 文案还是英文

@@ -35,6 +35,12 @@
             id="GitLink.AutoDetectSettings"
             displayName="Domain Registry"
         />
+        <applicationConfigurable
+            parentId="GitLink.ProjectSettings"
+            instance="uk.co.ben_gibson.git.link.ui.settings.OtherSettingsConfigurable"
+            id="GitLink.OtherSettings"
+            displayName="Other Settings"
+        />
     </extensions>
 
     <!-- UI -->
