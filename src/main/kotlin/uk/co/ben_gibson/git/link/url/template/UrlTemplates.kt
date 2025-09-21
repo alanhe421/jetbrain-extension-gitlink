@@ -68,5 +68,21 @@ data class UrlTemplates(val fileAtBranch: String, val fileAtCommit : String, val
                 "{remote:url:protocol}://{remote:url:host}/plugins/gitiles/{remote:url:path}/+/{commit}"
             )
         }
+
+        fun coding(): UrlTemplates {
+            return UrlTemplates(
+                "https://{remote:url:path:0}.coding.net/p/{remote:url:path:1}/d/{remote:url:path:2}/git/tree/{branch}/{file:path}/{file:name}{line-block:start}#L{line:start}-L{line:end}{line-block:end}",
+                "https://{remote:url:path:0}.coding.net/p/{remote:url:path:1}/d/{remote:url:path:2}/git/tree/{commit}/{file:path}/{file:name}{line-block:start}#L{line:start}-L{line:end}{line-block:end}",
+                "https://{remote:url:path:0}.coding.net/p/{remote:url:path:1}/d/{remote:url:path:2}/git/commit/{commit}"
+            )
+        }
+
+        fun tgit(): UrlTemplates {
+            return UrlTemplates(
+                "{remote:url}/blob/{branch}/{file:path}/{file:name}{line-block:start}#L{line:start}{line-block:end}",
+                "{remote:url}/blob/{commit}/{file:path}/{file:name}{line-block:start}#L{line:start}{line-block:end}",
+                "{remote:url}/commit/{commit}"
+            )
+        }
     }
 }

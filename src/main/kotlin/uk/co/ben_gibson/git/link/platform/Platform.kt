@@ -104,4 +104,19 @@ class Gerrit : Platform(
     false
 )
 
+class Coding : Platform(
+    UUID.fromString("f8e5c7d1-9a2b-4e3f-8c6d-5a7b8c9d0e1f"),
+    message("platform.coding.name"),
+    Icons.CODING,
+    setOf(Host("coding.net"))
+)
+
+class TGit : Platform(
+    UUID.fromString("a1b2c3d4-e5f6-7890-abcd-ef1234567890"),
+    message("platform.tgit.name"),
+    Icons.TGIT,
+    setOf(),
+    Pattern.compile(".*tgit.*", Pattern.CASE_INSENSITIVE)
+)
+
 class Custom(id: UUID, name: String, icon: Icon, domains: Set<Host> = setOf()) : Platform(id, name, icon, domains)

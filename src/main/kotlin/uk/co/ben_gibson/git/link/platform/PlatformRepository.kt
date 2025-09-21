@@ -18,7 +18,9 @@ private val EXISTING_PLATFORMS = setOf(
     Srht(),
     Azure(),
     Chromium(),
-    Gerrit()
+    Gerrit(),
+    Coding(),
+    TGit()
 )
 
 @Service
