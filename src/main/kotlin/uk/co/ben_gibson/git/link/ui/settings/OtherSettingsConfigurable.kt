@@ -3,6 +3,7 @@ package uk.co.ben_gibson.git.link.ui.settings
 import com.intellij.openapi.components.service
 import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.ui.dsl.builder.bindSelected
+import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
 import uk.co.ben_gibson.git.link.GitLinkBundle
 import uk.co.ben_gibson.git.link.GitLinkBundle.message
@@ -18,6 +19,11 @@ class OtherSettingsConfigurable : BoundConfigurable(message("settings.other.grou
                 checkBox(message("settings.other.field.use-remote-for-code-image.label"))
                     .bindSelected(settings::useRemoteForCodeImage)
                     .comment(message("settings.other.field.use-remote-for-code-image.help"))
+            }
+            row("Code Image Watermark:") {
+                textField()
+                    .bindText(settings::codeImageWatermark)
+                    .comment("Watermark for code snippet images. Leave empty for no watermark.")
             }
         }
         row {

@@ -33,6 +33,7 @@ class ApplicationSettings : PersistentStateComponent<ApplicationSettings?> {
     var hits = 0
     var requestSupport = true
     var useRemoteForCodeImage = true
+    var codeImageWatermark = ""
 
     override fun getState() = this
 

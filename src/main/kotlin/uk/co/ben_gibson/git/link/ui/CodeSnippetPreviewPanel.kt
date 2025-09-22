@@ -140,11 +140,16 @@ class CodeSnippetPreviewPanel(private val project: Project) : SimpleToolWindowPa
         val template = templateStream.bufferedReader().use { it.readText() }
 
         // Replace placeholders with actual values
+        val watermark = settings.codeImageWatermark
+        val showWatermark = watermark.isNotEmpty()
+
         return template
             .replace("%LANGUAGE%", language)
             .replace("%CODE%", escapeHtml(code))
             .replace("%FILENAME%", "code-snippet") // Default filename, could be made dynamic
             .replace("%SHOW_REMOTE%", if (useRemote) "block" else "none")
+            .replace("%WATERMARK%", escapeHtml(watermark))
+            .replace("%WATERMARK_DISPLAY%", if (showWatermark) "block" else "none")
     }
 
     private fun escapeHtml(text: String): String {
