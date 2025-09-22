@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://unpkg.com/dom-to-image-even-more@1.0.4/dist/dom-to-image-more.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/plugins/line-numbers.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            height: 100vh;
+            background-image: linear-gradient(140deg, rgb(207, 47, 152), rgb(106, 61, 236));
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .toolbar {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            justify-content: end;
+        }
+
+        .window {
+            background: #2d2d2d;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 20px 68px rgba(0, 0, 0, 0.55);
+        }
+
+        .titlebar {
+            background: #1a1a1a;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            -webkit-app-region: drag;
+            user-select: none;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 8px;
+            margin-right: 8px;
+        }
+
+        .window-control {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .window-control.close {
+            background: #ff5f56;
+        }
+
+        .window-control.minimize {
+            background: #ffbd2e;
+        }
+
+        .window-control.maximize {
+            background: #27c93f;
+        }
+
+        .window-title {
+            color: #808080;
+            font-size: 14px;
+            flex-grow: 1;
+            text-align: center;
+            margin-left: -52px;
+        }
+
+        .content {
+            padding: 0;
+            position: relative;
+        }
+
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            background: #2ea043;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background: #2c974b;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #2d2d2d;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            border-radius: 4px;
+        }
+
+        .dropdown-content div {
+            color: white;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .dropdown-content div:hover {
+            background-color: #404040;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        #editor {
+            background: #2d2d2d;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            width: fit-content;
+            overflow: visible;
+        }
+
+        #editor pre {
+            margin: 0;
+            width: fit-content;
+            overflow: visible;
+            position: relative;
+        }
+
+        #editor code {
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            width: fit-content;
+            display: block;
+        }
+
+        .hljs {
+            background: transparent !important;
+            padding: 0 !important;
+            width: fit-content !important;
+            overflow: visible !important;
+        }
+
+        pre>code {
+            display: flex;
+        }
+
+        pre>code .hljs-ln {
+            display: flex;
+        }
+
+        pre>code .hljs-ln-numbers {
+            display: flex;
+            flex-direction: column;
+            user-select: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        pre>code .hljs-ln-numbers div {
+            padding-top: 3px;
+            align-items: flex-start;
+            display: flex;
+            font-size: 12px;
+            flex: 1;
+        }
+
+        pre>code .hljs-ln-code {
+            padding-left: 10px;
+        }
+
+        .dropdown button {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .dropdown-icon {
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid white;
+            margin-left: 4px;
+        }
+
+        #penButton {
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border: 1px solid transparent;
+        }
+
+        #penButton.active {
+            background: #404040;
+            border-color: #2ea043;
+        }
+
+        #penButton svg {
+            transition: color 0.2s;
+        }
+
+        #penButton.active svg {
+            color: #2ea043;
+        }
+
+        #penButton::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2d2d2d;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+        }
+
+        #penButton:hover::after {
+            opacity: 1;
+        }
+
+        #drawingCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        #drawingCanvas.drawing-mode {
+            pointer-events: auto;
+        }
+
+        body.drawing {
+            cursor: crosshair;
+        }
+
+        .drawing #editor pre,
+        .drawing #editor code {
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 48px;
+            color: rgba(255, 255, 255, 0.1);
+            font-weight: bold;
+            pointer-events: none;
+            z-index: 0;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        .watermark.hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="toolbar">
+            <div class="dropdown">
+                <button onclick="copyImage()">Copy Image <span class="dropdown-icon"></span></button>
+                <div class="dropdown-content">
+                    <div onclick="copyImage()">Copy Image</div>
+                    <div onclick="downloadImage()">Download Image</div>
+                    <div onclick="openRemoteImage()" id="openRemoteBtn" style="display: %SHOW_REMOTE%;">Open Ray.so</div>
+                </div>
+            </div>
+            <button id="penButton" data-tooltip="Enable Pen">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM21.41 6.34l-3.75-3.75-2.53 2.54 3.75 3.75 2.53-2.54z" fill="currentColor" />
+                </svg>
+            </button>
+        </div>
+        <div class="window">
+            <div class="titlebar">
+                <div class="window-controls">
+                    <div class="window-control close"></div>
+                    <div class="window-control minimize"></div>
+                    <div class="window-control maximize"></div>
+                </div>
+                <div class="window-title">%FILENAME%</div>
+            </div>
+            <div class="content">
+                <div class="watermark" id="watermark">Beautiful GitLink</div>
+                <canvas id="drawingCanvas"></canvas>
+                <div id="editor">
+                    <pre><code class="language-%LANGUAGE%" id="code-content">%CODE%</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize highlight.js
+        hljs.highlightAll();
+        hljs.initLineNumbersOnLoad();
+
+        const editor = document.getElementById('editor');
+        let isDrawing = false;
+        let isDrawingMode = false;
+
+        // Canvas setup
+        const canvas = document.getElementById('drawingCanvas');
+        const ctx = canvas.getContext('2d');
+        const penButton = document.getElementById('penButton');
+        let lastX = 0;
+        let lastY = 0;
+
+        function resizeCanvas() {
+            const contentElement = document.querySelector('.content');
+            const rect = contentElement.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+        }
+
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        function togglePen() {
+            isDrawingMode = !isDrawingMode;
+            penButton.classList.toggle('active');
+            document.body.classList.toggle('drawing');
+            canvas.classList.toggle('drawing-mode');
+
+            penButton.setAttribute(
+                'data-tooltip',
+                isDrawingMode ? 'Disable Pen' : 'Enable Pen'
+            );
+
+            if (!isDrawingMode) {
+                isDrawing = false;
+            }
+        }
+
+        function startDrawing(e) {
+            if (!isDrawingMode) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            if (x < 0 || x > rect.width || y < 0 || y > rect.height) {
+                return;
+            }
+
+            isDrawing = true;
+            lastX = x;
+            lastY = y;
+
+            ctx.strokeStyle = '#ff0000';
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+        }
+
+        function draw(e) {
+            if (!isDrawing || !isDrawingMode) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            if (x < 0 || x > rect.width || y < 0 || y > rect.height) {
+                stopDrawing();
+                return;
+            }
+
+            ctx.lineTo(x, y);
+            ctx.stroke();
+
+            lastX = x;
+            lastY = y;
+        }
+
+        function stopDrawing() {
+            if (isDrawing) {
+                ctx.stroke();
+            }
+            isDrawing = false;
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // Event listeners
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        penButton.addEventListener('click', togglePen);
+        penButton.addEventListener('dblclick', (e) => {
+            e.preventDefault();
+            clearCanvas();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && isDrawingMode) {
+                togglePen();
+            }
+        });
+
+        // Image generation
+        async function generateImage() {
+            try {
+                console.log('Generating image...');
+                const windowElement = document.querySelector('.window');
+                const dataBlob = await domtoimage.toBlob(windowElement);
+                const dataUrl = await domtoimage.toPng(windowElement);
+                return { dataBlob, dataUrl };
+            } catch (error) {
+                console.error('Error generating image:', error);
+                window.copySnippet && window.copySnippet('error');
+                return null;
+            }
+        }
+
+        async function copyImage() {
+            const result = await generateImage();
+            if (result) {
+                try {
+                    const blob = await new Promise(resolve => resolve(result.dataBlob));
+                    if (blob) {
+                        await navigator.clipboard.write([
+                            new ClipboardItem({ 'image/png': blob })
+                        ]);
+                        window.copySnippet && window.copySnippet('copy-image-success');
+                    }
+                } catch (error) {
+                    console.error('Copy failed:', error);
+                    window.copySnippet && window.copySnippet('copy-image-error');
+                }
+            }
+        }
+
+        async function downloadImage() {
+            const result = await generateImage();
+            if (result) {
+                window.copySnippet && window.copySnippet('download-image:' + result.dataUrl);
+            }
+        }
+
+        function openRemoteImage() {
+            window.copySnippet && window.copySnippet('open-rayso');
+        }
+    </script>
+</body>
+
+</html>

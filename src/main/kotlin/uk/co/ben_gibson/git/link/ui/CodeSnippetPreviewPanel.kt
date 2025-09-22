@@ -9,6 +9,8 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.SimpleToolWindowPanel
+import com.intellij.openapi.fileChooser.FileChooserFactory
+import com.intellij.openapi.fileChooser.FileSaverDescriptor
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.openapi.wm.ToolWindowManager
@@ -21,6 +23,9 @@ import uk.co.ben_gibson.git.link.ui.notification.sendNotification
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 import javax.swing.JComponent
+import java.io.File
+import java.io.FileOutputStream
+import java.util.Base64
 
 class CodeSnippetPreviewPanel(private val project: Project) : SimpleToolWindowPanel(true, true), Disposable {
 
@@ -38,10 +43,14 @@ class CodeSnippetPreviewPanel(private val project: Project) : SimpleToolWindowPa
         val copyQuery = JBCefJSQuery.create(browser as JBCefBrowser)
         copyQuery.addHandler { request ->
             ApplicationManager.getApplication().invokeLater {
-                when (request) {
-                    "copy-html" -> copyHtmlToClipboard()
-                    "copy-text" -> copyTextToClipboard()
-                    "open-rayso" -> openInRaySo()
+                when {
+                    request == "copy-html" -> copyHtmlToClipboard()
+                    request == "copy-text" -> copyTextToClipboard()
+                    request == "open-rayso" -> openInRaySo()
+                    request == "copy-image-success" -> showCopyImageSuccessNotification()
+                    request == "copy-image-error" -> showCopyImageErrorNotification()
+                    request == "error" -> showGeneralErrorNotification()
+                    request.startsWith("download-image:") -> downloadImage(request.substringAfter("download-image:"))
                 }
             }
             return@addHandler null
@@ -76,194 +85,18 @@ class CodeSnippetPreviewPanel(private val project: Project) : SimpleToolWindowPa
         val settings = service<ApplicationSettings>()
         val useRemote = settings.useRemoteForCodeImage
 
-        return """
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <title>Code Snippet Preview</title>
-                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-                <style>
-                    body {
-                        margin: 0;
-                        padding: 20px;
-                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                        background: #f5f5f5;
-                        color: #333;
-                    }
-                    .header {
-                        background: white;
-                        padding: 15px 20px;
-                        border-radius: 8px;
-                        margin-bottom: 20px;
-                        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                    }
-                    .title {
-                        font-size: 18px;
-                        font-weight: 600;
-                        color: #2c3e50;
-                    }
-                    .actions {
-                        display: flex;
-                        gap: 10px;
-                    }
-                    .btn {
-                        padding: 8px 16px;
-                        border: none;
-                        border-radius: 6px;
-                        cursor: pointer;
-                        font-size: 14px;
-                        font-weight: 500;
-                        text-decoration: none;
-                        display: inline-flex;
-                        align-items: center;
-                        gap: 6px;
-                        transition: all 0.2s;
-                    }
-                    .btn-primary {
-                        background: #3498db;
-                        color: white;
-                    }
-                    .btn-primary:hover {
-                        background: #2980b9;
-                    }
-                    .btn-secondary {
-                        background: #95a5a6;
-                        color: white;
-                    }
-                    .btn-secondary:hover {
-                        background: #7f8c8d;
-                    }
-                    .btn-success {
-                        background: #27ae60;
-                        color: white;
-                    }
-                    .btn-success:hover {
-                        background: #229954;
-                    }
-                    .code-container {
-                        background: white;
-                        border-radius: 12px;
-                        padding: 24px;
-                        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-                        border: 1px solid #e1e8ed;
-                        position: relative;
-                        overflow: hidden;
-                    }
-                    .code-container::before {
-                        content: '';
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        right: 0;
-                        height: 3px;
-                        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-                    }
-                    .code-header {
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        margin-bottom: 16px;
-                        padding-bottom: 12px;
-                        border-bottom: 1px solid #f0f0f0;
-                    }
-                    .language-badge {
-                        background: #f8f9fa;
-                        color: #495057;
-                        padding: 4px 12px;
-                        border-radius: 20px;
-                        font-size: 12px;
-                        font-weight: 600;
-                        text-transform: uppercase;
-                        letter-spacing: 0.5px;
-                    }
-                    .line-count {
-                        font-size: 12px;
-                        color: #6c757d;
-                    }
-                    pre {
-                        margin: 0;
-                        overflow: auto;
-                        background: transparent;
-                        border: none;
-                        padding: 0;
-                    }
-                    code {
-                        font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace;
-                        font-size: 14px;
-                        line-height: 1.6;
-                        background: transparent;
-                    }
-                    .footer {
-                        margin-top: 20px;
-                        text-align: center;
-                        color: #6c757d;
-                        font-size: 12px;
-                    }
-                    @media (max-width: 768px) {
-                        body { padding: 10px; }
-                        .header { flex-direction: column; gap: 10px; }
-                        .actions { width: 100%; justify-content: center; }
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="header">
-                    <div class="title">Code Snippet Preview</div>
-                    <div class="actions">
-                        <button class="btn btn-secondary" onclick="copySnippet('copy-text')">
-                            📋 Copy Text
-                        </button>
-                        <button class="btn btn-primary" onclick="copySnippet('copy-html')">
-                            🎨 Copy HTML
-                        </button>
-                        ${if (useRemote) """
-                        <button class="btn btn-success" onclick="copySnippet('open-rayso')">
-                            🚀 Open Ray.so
-                        </button>
-                        """ else ""}
-                    </div>
-                </div>
+        // Load HTML template from resources
+        val templateStream = javaClass.getResourceAsStream("/templates/code-snippet-preview.html")
+            ?: throw IllegalStateException("Could not find code-snippet-preview.html template")
 
-                <div class="code-container">
-                    <div class="code-header">
-                        <span class="language-badge">${language.uppercase()}</span>
-                        <span class="line-count">${code.lines().size} lines</span>
-                    </div>
-                    <pre><code class="language-$language" id="code-content">${escapeHtml(code)}</code></pre>
-                </div>
+        val template = templateStream.bufferedReader().use { it.readText() }
 
-                <div class="footer">
-                    Generated by Beautiful GitLink • ${if (useRemote) "Ray.so mode enabled" else "Local mode enabled"}
-                </div>
-
-                <script>
-                    hljs.highlightAll();
-
-                    // Add copy feedback
-                    function showCopyFeedback(button, message) {
-                        const originalText = button.textContent;
-                        button.textContent = message;
-                        button.style.background = '#27ae60';
-                        setTimeout(() => {
-                            button.textContent = originalText;
-                            button.style.background = '';
-                        }, 2000);
-                    }
-
-                    document.addEventListener('click', function(e) {
-                        if (e.target.tagName === 'BUTTON') {
-                            showCopyFeedback(e.target, '✓ Copied!');
-                        }
-                    });
-                </script>
-            </body>
-            </html>
-        """.trimIndent()
+        // Replace placeholders with actual values
+        return template
+            .replace("%LANGUAGE%", language)
+            .replace("%CODE%", escapeHtml(code))
+            .replace("%FILENAME%", "code-snippet") // Default filename, could be made dynamic
+            .replace("%SHOW_REMOTE%", if (useRemote) "block" else "none")
     }
 
     private fun escapeHtml(text: String): String {
@@ -305,6 +138,60 @@ class CodeSnippetPreviewPanel(private val project: Project) : SimpleToolWindowPa
         val mappedLanguage = mapLanguageId(currentLanguage)
         val rayUrl = "https://ray.so/#theme=candy&background=white&padding=128&code=$encodedContent&language=$mappedLanguage"
         BrowserUtil.browse(rayUrl)
+    }
+
+    private fun showCopyImageSuccessNotification() {
+        sendNotification(Notification(
+            "Image Copied",
+            "Code snippet image has been copied to clipboard",
+            type = Notification.Type.TRANSIENT
+        ), project)
+    }
+
+    private fun showCopyImageErrorNotification() {
+        sendNotification(Notification(
+            "Copy Failed",
+            "Failed to copy image to clipboard",
+            type = Notification.Type.PERSISTENT
+        ), project)
+    }
+
+    private fun showGeneralErrorNotification() {
+        sendNotification(Notification(
+            "Error",
+            "An error occurred while generating the image",
+            type = Notification.Type.PERSISTENT
+        ), project)
+    }
+
+    private fun downloadImage(dataUrl: String) {
+        try {
+            // Extract base64 data from data URL
+            val base64Data = dataUrl.substringAfter("data:image/png;base64,")
+            val imageBytes = Base64.getDecoder().decode(base64Data)
+
+            // Show file save dialog
+            val descriptor = FileSaverDescriptor("Save Code Snippet Image", "Save code snippet as PNG image", "png")
+            val saveWrapper = FileChooserFactory.getInstance().createSaveFileDialog(descriptor, project)
+            val fileToSave = saveWrapper.save("code-snippet.png")
+
+            if (fileToSave != null) {
+                FileOutputStream(fileToSave.file).use { fos ->
+                    fos.write(imageBytes)
+                }
+                sendNotification(Notification(
+                    "Image Saved",
+                    "Code snippet image saved to ${fileToSave.file.absolutePath}",
+                    type = Notification.Type.TRANSIENT
+                ), project)
+            }
+        } catch (e: Exception) {
+            sendNotification(Notification(
+                "Save Failed",
+                "Failed to save image: ${e.message}",
+                type = Notification.Type.PERSISTENT
+            ), project)
+        }
     }
 
     private fun mapLanguageId(language: String): String {
