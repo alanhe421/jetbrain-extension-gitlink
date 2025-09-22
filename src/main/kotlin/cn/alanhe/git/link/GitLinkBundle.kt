@@ -6,6 +6,7 @@ import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.Project
+import cn.alanhe.git.link.ui.settings.ProjectSettingsConfigurable
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.PropertyKey
 
@@ -26,11 +27,11 @@ object GitLinkBundle : DynamicBundle(BUNDLE) {
         getLazyMessage(key, *params)
 
     fun openPluginSettings(project: Project) {
-        ShowSettingsUtil.getInstance().showSettingsDialog(project, message("settings.general.group.title"))
+        ShowSettingsUtil.getInstance().showSettingsDialog(project, ProjectSettingsConfigurable::class.java)
     }
 
     fun openRepository() {
-        BrowserLauncher.instance.open("https://github.com/ben-gibson/GitLink")
+        BrowserLauncher.instance.open("https://github.com/alanhe421/jetbrain-extension-gitlink")
     }
 
     fun plugin() = PluginManagerCore.getPlugin(PluginId.getId("cn.alanhe.plugin.beautiful-gitlink"))
