@@ -36,7 +36,54 @@ class CodeSnippetPreviewPanel(private val project: Project) : SimpleToolWindowPa
     init {
         setContent(browser.component)
         setupJavaScriptBridge()
+        setupDevTools()
         showWelcomeMessage()
+    }
+
+    private fun setupDevTools() {
+        // Add Ctrl+Shift+I shortcut for DevTools (official method)
+        browser.component.registerKeyboardAction(
+            {
+                openDevTools()
+            },
+            javax.swing.KeyStroke.getKeyStroke("ctrl shift I"),
+            javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW
+        )
+
+        // Also add F12 shortcut
+        browser.component.registerKeyboardAction(
+            {
+                openDevTools()
+            },
+            javax.swing.KeyStroke.getKeyStroke("F12"),
+            javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW
+        )
+
+        println("[CodeSnippetPreview] DevTools shortcuts registered: Ctrl+Shift+I and F12")
+    }
+
+    private fun openDevTools() {
+        try {
+            // Official method from documentation - exact syntax
+            val devTools = browser.cefBrowser.devTools
+            val devToolsBrowser = JBCefBrowser.createBuilder()
+                .setCefBrowser(devTools)
+                .setClient(browser.jbCefClient)
+                .build()
+
+            // Create a dialog to show DevTools
+            val dialog = com.intellij.openapi.ui.DialogBuilder()
+            dialog.setTitle("Code Snippet Preview - DevTools")
+            dialog.setCenterPanel(devToolsBrowser.component)
+            dialog.setPreferredFocusComponent(devToolsBrowser.component)
+            dialog.setDimensionServiceKey("CodeSnippetPreviewDevTools")
+            dialog.show()
+
+            println("[CodeSnippetPreview] DevTools opened successfully")
+        } catch (e: Exception) {
+            println("[CodeSnippetPreview] Failed to open DevTools: ${e.message}")
+            e.printStackTrace()
+        }
     }
 
     private fun setupJavaScriptBridge() {
@@ -47,6 +94,7 @@ class CodeSnippetPreviewPanel(private val project: Project) : SimpleToolWindowPa
                     request == "copy-html" -> copyHtmlToClipboard()
                     request == "copy-text" -> copyTextToClipboard()
                     request == "open-rayso" -> openInRaySo()
+                    request == "open-devtools" -> openDevTools()
                     request == "copy-image-success" -> showCopyImageSuccessNotification()
                     request == "copy-image-error" -> showCopyImageErrorNotification()
                     request == "error" -> showGeneralErrorNotification()
