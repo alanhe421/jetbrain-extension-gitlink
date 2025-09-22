@@ -51,9 +51,15 @@ abstract class Action(private val type: Type): DumbAwareAction() {
 
         event.presentation.isEnabled = shouldBeEnabled(event)
 
-        event.presentation.icon = host.icon
+        if (shouldShowIcon(event)) {
+            event.presentation.icon = host.icon
+        } else {
+            event.presentation.icon = null
+        }
         event.presentation.text = GitLinkBundle.message("actions.${type.key}.title", host.name)
     }
+
+    protected open fun shouldShowIcon(event: AnActionEvent) = true
 
     override fun getActionUpdateThread(): ActionUpdateThread {
         return ActionUpdateThread.BGT

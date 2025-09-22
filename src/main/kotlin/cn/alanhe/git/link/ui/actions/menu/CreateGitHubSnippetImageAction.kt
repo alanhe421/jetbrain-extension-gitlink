@@ -61,11 +61,13 @@ open class CreateGitHubSnippetImageAction @JvmOverloads constructor(
         event.presentation.text = GitLinkBundle.message("actions.create-snippet-image.title")
 
         // Set icon from platform (same as other GitLink actions)
-        if (project != null) {
+        if (project != null && placement == Placement.MAIN) {
             val host = project.service<PlatformLocator>().locate()
             if (host != null) {
                 event.presentation.icon = host.icon
             }
+        } else if (placement == Placement.SUBMENU) {
+            event.presentation.icon = null
         }
 
         if (placement == Placement.MAIN &&

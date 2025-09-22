@@ -20,6 +20,10 @@ open class MarkdownAction @JvmOverloads constructor(
             event.presentation.isEnabledAndVisible = false
         }
     }
+
+    override fun shouldShowIcon(event: AnActionEvent): Boolean {
+        return placement == Placement.MAIN
+    }
 }
 
 class MarkdownSubmenuAction : MarkdownAction(Placement.SUBMENU)
