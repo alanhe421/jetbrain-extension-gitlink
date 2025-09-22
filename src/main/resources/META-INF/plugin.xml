@@ -85,6 +85,12 @@
             <add-to-group group-id="EditorPopupMenu"/>
         </action>
         <action
+            id="uk.co.ben_gibson.git.link.ui.actions.menu.CreateGitHubSnippetImageAction"
+            class="uk.co.ben_gibson.git.link.ui.actions.menu.CreateGitHubSnippetImageAction"
+        >
+            <add-to-group group-id="EditorPopupMenu"/>
+        </action>
+        <action
             id="uk.co.ben_gibson.git.link.ui.actions.vcslog.BrowserAction"
             class="uk.co.ben_gibson.git.link.ui.actions.vcslog.BrowserAction"
         >
