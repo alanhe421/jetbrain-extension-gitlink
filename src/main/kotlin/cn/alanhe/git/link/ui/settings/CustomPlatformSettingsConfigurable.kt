@@ -10,29 +10,36 @@ import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.table.TableView
 import com.intellij.util.ui.ColumnInfo
 import com.intellij.util.ui.ListTableModel
+import com.intellij.util.ui.JBUI
 import cn.alanhe.git.link.settings.ApplicationSettings
 import cn.alanhe.git.link.settings.ApplicationSettings.CustomHostSettings
+import cn.alanhe.git.link.platform.Platform
+import cn.alanhe.git.link.platform.PlatformRepository
+import cn.alanhe.git.link.url.factory.PLATFORM_MAP
 import javax.swing.ListSelectionModel.SINGLE_SELECTION
 import cn.alanhe.git.link.GitLinkBundle.message
-import cn.alanhe.git.link.extension.replaceAt
 import cn.alanhe.git.link.ui.components.SubstitutionReferenceTable
 import cn.alanhe.git.link.ui.validation.*
+import java.awt.Dimension
 
 class CustomPlatformSettingsConfigurable : BoundConfigurable(message("settings.custom-platform.group.title")) {
     private var settings = service<ApplicationSettings>()
+    private val platformRepository = service<PlatformRepository>()
     private var customPlatforms = settings.customHosts
     private val tableModel = createTableModel()
 
-    private val table = TableView(tableModel).apply {
+    private val table = TableView<PlatformTableRow>(tableModel).apply {
         setShowColumns(true)
         setSelectionMode(SINGLE_SELECTION)
         emptyText.text = message("settings.custom-platform.table.empty")
+        preferredScrollableViewportSize = Dimension(JBUI.scale(480), rowHeight * 10)
     }
 
     private val tableContainer = ToolbarDecorator.createDecorator(table)
         .setAddAction { addCustomPlatform() }
         .setEditAction { editCustomPlatform() }
         .setRemoveAction { removeCustomPlatform() }
+        .setRemoveActionUpdater { table.selectedObject is PlatformTableRow.Custom }
         .createPanel()
 
     override fun createPanel() = panel {
@@ -42,17 +49,17 @@ class CustomPlatformSettingsConfigurable : BoundConfigurable(message("settings.c
         }
     }
 
-    private fun createTableModel(): ListTableModel<CustomHostSettings> = ListTableModel(
+    private fun createTableModel(): ListTableModel<PlatformTableRow> = ListTableModel(
         arrayOf(
-            createColumn(message("settings.custom-platform.table.column.name")) { customPlatform -> customPlatform?.displayName },
-            createColumn(message("settings.custom-platform.table.column.domain")) { customPlatform -> customPlatform?.baseUrl },
+            createColumn(message("settings.custom-platform.table.column.name")) { row -> row?.displayName },
+            createColumn(message("settings.custom-platform.table.column.domain")) { row -> row?.domainDescription },
         ),
-        customPlatforms
+        buildTableRows()
     )
 
-    private fun createColumn(name: String, formatter: (CustomHostSettings?) -> String?) : ColumnInfo<CustomHostSettings, String> {
-        return object : ColumnInfo<CustomHostSettings, String>(name) {
-            override fun valueOf(item: CustomHostSettings?): String? {
+    private fun createColumn(name: String, formatter: (PlatformTableRow?) -> String?) : ColumnInfo<PlatformTableRow, String> {
+        return object : ColumnInfo<PlatformTableRow, String>(name) {
+            override fun valueOf(item: PlatformTableRow?): String? {
                 return formatter(item)
             }
         }
@@ -68,25 +75,41 @@ class CustomPlatformSettingsConfigurable : BoundConfigurable(message("settings.c
     }
 
     private fun removeCustomPlatform() {
-        val row = table.selectedObject ?: return
+        val row = table.selectedObject as? PlatformTableRow.Custom ?: return
 
-        customPlatforms = customPlatforms.minus(row)
+        customPlatforms = customPlatforms.filterNot { it.id == row.settings.id }
         refreshTableModel()
     }
 
     private fun editCustomPlatform() {
-        val row = table.selectedObject ?: return
+        val row = table.selectedObject as? PlatformTableRow ?: return
 
-        val dialog = CustomPlatformDialog(row.copy())
+        when (row) {
+            is PlatformTableRow.Custom -> {
+                val dialog = CustomPlatformDialog(row.settings.copy())
 
-        if (dialog.showAndGet()) {
-            customPlatforms = customPlatforms.replaceAt(table.selectedRow, dialog.platform)
-            refreshTableModel()
+                if (dialog.showAndGet()) {
+                    customPlatforms = customPlatforms.map { existing ->
+                        if (existing.id == row.settings.id) dialog.platform else existing
+                    }
+                    refreshTableModel()
+                }
+            }
+            is PlatformTableRow.BuiltIn -> {
+                BuiltInPlatformDialog(row.platform).show()
+            }
         }
     }
 
     private fun refreshTableModel() {
-        tableModel.items = customPlatforms
+        tableModel.items = buildTableRows()
+    }
+
+    private fun buildTableRows(): MutableList<PlatformTableRow> {
+        val builtIn = platformRepository.getDefaults().map { PlatformTableRow.BuiltIn(it) }
+        val custom = customPlatforms.map { PlatformTableRow.Custom(it) }
+
+        return (builtIn + custom).toMutableList()
     }
 
     override fun reset() {
@@ -153,6 +176,83 @@ private class CustomPlatformDialog(customPlatform: CustomHostSettings? = null) :
         row {
             scrollCell(substitutionReferenceTable)
                 .align(Align.FILL)
+        }
+    }
+}
+
+private sealed class PlatformTableRow {
+    abstract val displayName: String
+    abstract val domainDescription: String
+
+    class BuiltIn(val platform: Platform) : PlatformTableRow() {
+        override val displayName: String = platform.name
+        override val domainDescription: String = when {
+            platform.domains.isNotEmpty() -> platform.domains.joinToString(", ") { it.toString() }
+            platform.domainPattern != null -> platform.domainPattern.pattern()
+            else -> ""
+        }
+    }
+
+    class Custom(val settings: CustomHostSettings) : PlatformTableRow() {
+        override val displayName: String = settings.displayName
+        override val domainDescription: String = settings.baseUrl
+    }
+}
+
+private class BuiltInPlatformDialog(private val platform: Platform) : DialogWrapper(false) {
+    private val templates = PLATFORM_MAP[platform::class.java]
+
+    init {
+        title = message("settings.custom-platform.view-dialog.title", platform.name)
+        setOKButtonText(message("actions.close"))
+        init()
+    }
+
+    override fun createCenterPanel() = panel {
+        row(message("settings.custom-platform.view-dialog.field.name.label")) {
+            textField()
+                .applyToComponent {
+                    text = platform.name
+                    isEditable = false
+                }
+        }
+        row(message("settings.custom-platform.view-dialog.field.domain.label")) {
+            textField()
+                .applyToComponent {
+                    text = when {
+                        platform.domains.isNotEmpty() -> platform.domains.joinToString(", ") { it.toString() }
+                        platform.domainPattern != null -> platform.domainPattern.pattern()
+                        else -> ""
+                    }
+                    isEditable = false
+                }
+        }
+        if (templates != null) {
+            row(message("settings.custom-platform.add-dialog.field.file-at-branch-template.label")) {
+                textField()
+                    .applyToComponent {
+                        text = templates.fileAtBranch
+                        isEditable = false
+                    }
+            }
+            row(message("settings.custom-platform.add-dialog.field.file-at-commit-template.label")) {
+                textField()
+                    .applyToComponent {
+                        text = templates.fileAtCommit
+                        isEditable = false
+                    }
+            }
+            row(message("settings.custom-platform.add-dialog.field.commit-template.label")) {
+                textField()
+                    .applyToComponent {
+                        text = templates.commit
+                        isEditable = false
+                    }
+            }
+        } else {
+            row {
+                comment(message("settings.custom-platform.view-dialog.no-templates"))
+            }
         }
     }
 }

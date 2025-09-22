@@ -32,6 +32,7 @@ class PlatformRepository {
         return platforms.firstOrNull { it.domains.contains(domain) } ?: platforms.firstOrNull { it.domainPattern?.matcher(domain.toString())?.matches() == true }
     }
     fun getAll() = load()
+    fun getDefaults() = EXISTING_PLATFORMS
 
     private fun load(): Set<Platform> {
         val settings = service<ApplicationSettings>()
