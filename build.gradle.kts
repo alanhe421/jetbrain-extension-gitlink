@@ -90,6 +90,14 @@ intellijPlatform {
             sinceBuild = providers.gradleProperty("pluginSinceBuild")
             untilBuild = providers.gradleProperty("pluginUntilBuild")
         }
+
+        productDescriptor {
+            code = providers.gradleProperty("marketplaceProductCode")
+            releaseDate = providers.gradleProperty("marketplaceReleaseDate")
+            releaseVersion = providers.gradleProperty("marketplaceReleaseVersion")
+            optional = providers.gradleProperty("marketplaceOptional").map(String::toBoolean)
+            eap = providers.gradleProperty("marketplaceEap").map(String::toBoolean)
+        }
     }
 
     signing {

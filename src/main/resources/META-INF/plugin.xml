@@ -2,7 +2,7 @@
 <idea-plugin>
     <id>cn.alanhe.plugin.beautiful-gitlink</id>
     <name>Beautiful GitLink</name>
-    <vendor url="https://github.com/alanhe421">Alan He</vendor>
+    <vendor email="qianghe421@gmail.com" url="https://github.com/alanhe421">Alan He</vendor>
     <depends>com.intellij.modules.platform</depends>
     <depends>Git4Idea</depends>
     <description>
