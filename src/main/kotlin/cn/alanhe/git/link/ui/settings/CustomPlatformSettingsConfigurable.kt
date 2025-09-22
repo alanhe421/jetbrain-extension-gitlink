@@ -21,6 +21,8 @@ import cn.alanhe.git.link.GitLinkBundle.message
 import cn.alanhe.git.link.ui.components.SubstitutionReferenceTable
 import cn.alanhe.git.link.ui.validation.*
 import java.awt.Dimension
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
 
 class CustomPlatformSettingsConfigurable : BoundConfigurable(message("settings.custom-platform.group.title")) {
     private var settings = service<ApplicationSettings>()
@@ -33,6 +35,17 @@ class CustomPlatformSettingsConfigurable : BoundConfigurable(message("settings.c
         setSelectionMode(SINGLE_SELECTION)
         emptyText.text = message("settings.custom-platform.table.empty")
         preferredScrollableViewportSize = Dimension(JBUI.scale(600), rowHeight * 18)
+        addMouseListener(object : MouseAdapter() {
+            override fun mouseClicked(event: MouseEvent) {
+                if (event.clickCount == 2 && event.button == MouseEvent.BUTTON1) {
+                    val rowIndex = rowAtPoint(event.point)
+                    if (rowIndex >= 0) {
+                        setRowSelectionInterval(rowIndex, rowIndex)
+                        editCustomPlatform()
+                    }
+                }
+            }
+        })
     }
 
     private val tableContainer = ToolbarDecorator.createDecorator(table)
