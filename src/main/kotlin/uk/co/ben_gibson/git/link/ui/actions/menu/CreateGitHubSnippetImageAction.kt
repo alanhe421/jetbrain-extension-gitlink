@@ -9,6 +9,13 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.DumbAwareAction
 import uk.co.ben_gibson.git.link.GitLinkBundle
 import uk.co.ben_gibson.git.link.platform.PlatformLocator
+import uk.co.ben_gibson.git.link.settings.ApplicationSettings
+import uk.co.ben_gibson.git.link.ui.notification.Notification
+import uk.co.ben_gibson.git.link.ui.notification.sendNotification
+import uk.co.ben_gibson.git.link.ui.CodeSnippetPreviewPanel
+import com.intellij.openapi.project.Project
+import java.awt.Toolkit
+import java.awt.datatransfer.StringSelection
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.*
@@ -21,15 +28,23 @@ class CreateGitHubSnippetImageAction : DumbAwareAction() {
         val selectedText = editor.selectionModel.selectedText ?: return
         val file = event.getData(CommonDataKeys.VIRTUAL_FILE) ?: return
 
+        // Get settings to determine which mode to use
+        val settings = service<ApplicationSettings>()
+        val useRemote = settings.useRemoteForCodeImage
+
         // Determine language from file extension
         val language = getLanguageFromExtension(file.extension)
 
-        // Generate ray.so URL
-        val rayUrl = getRemoteImageUrl(selectedText, language)
-
-        // Open in browser
-        BrowserUtil.browse(rayUrl)
+        if (useRemote) {
+            // Remote mode: Open ray.so in browser
+            val rayUrl = getRemoteImageUrl(selectedText, language)
+            BrowserUtil.browse(rayUrl)
+        } else {
+            // Local mode: Show preview panel
+            CodeSnippetPreviewPanel.showPreview(project, selectedText, language)
+        }
     }
+
 
     override fun update(event: AnActionEvent) {
         super.update(event)

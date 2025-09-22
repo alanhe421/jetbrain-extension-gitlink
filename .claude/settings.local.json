@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./gradlew:*)",
+      "Read(//Users/alanhe/GitHub/alanhe/vsc-extension-gitlink/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

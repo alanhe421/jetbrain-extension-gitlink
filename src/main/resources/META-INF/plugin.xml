@@ -41,6 +41,13 @@
             id="GitLink.OtherSettings"
             displayName="Other Settings"
         />
+        <toolWindow
+            id="Code Snippet Preview"
+            displayName="Code Snippet Preview"
+            anchor="right"
+            factoryClass="uk.co.ben_gibson.git.link.ui.CodeSnippetPreviewToolWindowFactory"
+            icon="uk.co.ben_gibson.git.link.ui.Icons.GIT_LINK"
+        />
     </extensions>
 
     <!-- UI -->
@@ -69,26 +76,31 @@
             <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="shift ctrl C"/>
             <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl C"/>
         </action>
+        <!-- GitLink Others submenu group -->
+        <group id="GitLinkOthersGroup" class="uk.co.ben_gibson.git.link.ui.actions.menu.GitLinkOthersGroup" popup="true">
+            <add-to-group group-id="EditorPopupMenu"/>
+            <action
+                id="uk.co.ben_gibson.git.link.ui.actions.menu.MarkdownAction.Others"
+                class="uk.co.ben_gibson.git.link.ui.actions.menu.MarkdownAction"
+            />
+            <action
+                id="uk.co.ben_gibson.git.link.ui.actions.menu.CopyMarkdownSnippetAction"
+                class="uk.co.ben_gibson.git.link.ui.actions.menu.CopyMarkdownSnippetAction"
+            />
+            <action
+                id="uk.co.ben_gibson.git.link.ui.actions.menu.CreateGitHubSnippetImageAction"
+                class="uk.co.ben_gibson.git.link.ui.actions.menu.CreateGitHubSnippetImageAction"
+            />
+        </group>
+
+        <!-- Keep MarkdownAction in other menus for backward compatibility -->
         <action
             id="uk.co.ben_gibson.git.link.ui.actions.menu.MarkdownAction"
             class="uk.co.ben_gibson.git.link.ui.actions.menu.MarkdownAction"
         >
             <add-to-group group-id="Git.MainMenu" anchor="last"/>
-            <add-to-group group-id="EditorPopupMenu"/>
             <add-to-group group-id="ProjectViewPopupMenu"/>
             <add-to-group group-id="EditorTabPopupMenu"/>
-        </action>
-        <action
-            id="uk.co.ben_gibson.git.link.ui.actions.menu.CopyMarkdownSnippetAction"
-            class="uk.co.ben_gibson.git.link.ui.actions.menu.CopyMarkdownSnippetAction"
-        >
-            <add-to-group group-id="EditorPopupMenu"/>
-        </action>
-        <action
-            id="uk.co.ben_gibson.git.link.ui.actions.menu.CreateGitHubSnippetImageAction"
-            class="uk.co.ben_gibson.git.link.ui.actions.menu.CreateGitHubSnippetImageAction"
-        >
-            <add-to-group group-id="EditorPopupMenu"/>
         </action>
         <action
             id="uk.co.ben_gibson.git.link.ui.actions.vcslog.BrowserAction"
