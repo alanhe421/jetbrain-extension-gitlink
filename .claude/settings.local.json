@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(./gradlew:*)",
-      "Read(//Users/alanhe/GitHub/alanhe/vsc-extension-gitlink/**)"
+      "Read(//Users/alanhe/GitHub/alanhe/vsc-extension-gitlink/**)",
+      "WebFetch(domain:plugins.jetbrains.com)"
     ],
     "deny": [],
     "ask": []
