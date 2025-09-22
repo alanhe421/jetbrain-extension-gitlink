@@ -1,16 +1,49 @@
-# Beautiful GitLink
+# Beautiful GitLink – JetBrains Plugin
 
 ![Build](https://github.com/ben-gibson/GitLink/workflows/Build/badge.svg)
-[![Version](https://img.shields.io/jetbrains/plugin/v/8183-gitlink.svg)](https://plugins.jetbrains.com/plugin/8183-gitlink)
-[![Rating](https://img.shields.io/jetbrains/plugin/r/stars/8183-gitlink.svg)](https://plugins.jetbrains.com/plugin/8183-gitlink)
-[![Downloads](https://img.shields.io/jetbrains/plugin/d/8183-gitlink.svg)](https://plugins.jetbrains.com/plugin/8183-gitlink)
+[![readme](https://jaywcjlove.github.io/sb/lang/chinese.svg)](README-zh.md)
 
 <!-- Plugin description -->
 
-A [Jetbrains plugin](https://plugins.jetbrains.com/plugin/8183-gitlink) providing shortcuts to open or copy a file, directory or commit in `GitHub`, `Bitbucket`, 
-`GitLab`, `Gitee` `Gitea`, `Gogs`, `Azure`, `sourcehut`, and `Gerrit`. Custom hosts can also be configured using the URL template syntax.
+Beautiful GitLink brings one-click remote navigation to IntelliJ IDEA, WebStorm and every JetBrains IDE. Open or copy the
+remote URL for the current file, directory or commit without ever leaving the editor, and tailor the experience to the
+Git platform your team uses.
 
 <!-- Plugin description end -->
+
+> Looking for the VS Code extension? Try [Beautiful GitLink for VS Code](https://marketplace.visualstudio.com/items?itemName=AlanHe.cn-alanhe-gitlink&ssr=false#overview).
+
+## Features
+
+- Open the current file, directory, or commit in your browser from the editor, gutter, project view, or Git log.
+- Copy remote URLs as plain links or Markdown, including rich snippets that capture the current selection.
+- Generate shareable code snippet images with a live preview, annotation pen, double-click-to-clear drawings, and
+  optional watermarks or ray.so export.
+- Automatically detect the remote host and fall back to customizable templates when the commit is not yet pushed.
+- Configure menu placement per action so frequently used commands stay near the top-level context menu.
+- Add custom Git platforms with separate templates for branch, commit, and file URLs; manage domain overrides per
+  platform.
+- Works with both HTTPS and SSH remotes and supports multi-line selections for precise line references.
+
+## Built-in Supported Platforms
+
+- [GitHub](https://github.com)
+- [GitLab](https://gitlab.com)
+- [Bitbucket Cloud](https://bitbucket.org)
+- Bitbucket Server / Data Center (pattern match)
+- [Gitea](https://gitea.io)
+- [Gogs](https://gogs.io)
+- [Gitee](https://gitee.com)
+- [SourceHut](https://git.sr.ht)
+- [Azure DevOps](https://dev.azure.com)
+- Chromium Gerrit (googlesource.com)
+- Gerrit (pattern match)
+- [腾讯 Coding](https://coding.net)
+- [腾讯 TGit](https://git.code.tencent.com)
+
+Custom hosts can be added from **Settings → Tools → GitLink → Custom Platforms**. Provide branch/commit/file templates
+and optional domains so GitLink can switch automatically. Additional domain mappings can be maintained under **Settings →
+Tools → GitLink → Domain Registry**.
 
 <div>
   <a href="https://plugins.jetbrains.com/plugin/8183-gitlink">
@@ -40,7 +73,7 @@ To open the current file in the default browser:
 
 Additional shortcuts are available including from the editor gutter and Git log window.
 
-A URL can be generated in one of the following ways: 
+A URL can be generated in one of the following ways:
 
 * File at a commit
 * File at a branch
