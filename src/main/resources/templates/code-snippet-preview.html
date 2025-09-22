@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
     <script src="https://unpkg.com/dom-to-image-even-more@1.0.4/dist/dom-to-image-more.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/plugins/line-numbers.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.9.0/highlightjs-line-numbers.min.js"></script>
     <style>
         body {
             margin: 0;
@@ -316,6 +316,11 @@
                     <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM21.41 6.34l-3.75-3.75-2.53 2.54 3.75 3.75 2.53-2.54z" fill="currentColor" />
                 </svg>
             </button>
+            <button id="debugButton" data-tooltip="Open DevTools (Ctrl+Shift+I)" style="margin-left: 8px;" onclick="openDebugTools()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 8h-2.81c-.45-.78-1.07-1.45-1.82-1.96L17 4.41 15.59 3l-2.17 2.17C12.96 5.06 12.49 5 12 5s-.96.06-1.42.17L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.26 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20V8zm-6 8h-4v-2h4v2zm0-4h-4v-2h4v2z" fill="currentColor"/>
+                </svg>
+            </button>
         </div>
         <div class="window">
             <div class="titlebar">
@@ -338,8 +343,12 @@
 
     <script>
         // Initialize highlight.js
-        hljs.highlightAll();
-        hljs.initLineNumbersOnLoad();
+        try {
+            hljs.highlightAll();
+            console.log('Highlight.js initialized successfully');
+        } catch (error) {
+            console.error('Failed to initialize highlight.js:', error);
+        }
 
         const editor = document.getElementById('editor');
         let isDrawing = false;
@@ -492,6 +501,11 @@
 
         function openRemoteImage() {
             window.copySnippet && window.copySnippet('open-rayso');
+        }
+
+        function openDebugTools() {
+            console.log('Debug tools requested');
+            window.copySnippet && window.copySnippet('open-devtools');
         }
     </script>
 </body>
