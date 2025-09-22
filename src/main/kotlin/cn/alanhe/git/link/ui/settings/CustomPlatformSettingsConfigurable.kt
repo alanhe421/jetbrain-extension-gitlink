@@ -32,7 +32,7 @@ class CustomPlatformSettingsConfigurable : BoundConfigurable(message("settings.c
         setShowColumns(true)
         setSelectionMode(SINGLE_SELECTION)
         emptyText.text = message("settings.custom-platform.table.empty")
-        preferredScrollableViewportSize = Dimension(JBUI.scale(480), rowHeight * 10)
+        preferredScrollableViewportSize = Dimension(JBUI.scale(600), rowHeight * 18)
     }
 
     private val tableContainer = ToolbarDecorator.createDecorator(table)
