@@ -10,34 +10,34 @@
     </description>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceImplementation="uk.co.ben_gibson.git.link.settings.ApplicationSettings"/>
+        <applicationService serviceImplementation="cn.alanhe.git.link.settings.ApplicationSettings"/>
         <notificationGroup id="git.link.notification.general" displayType="BALLOON" key="notification.group.general.name" />
         <notificationGroup id="git.link.notification.important" displayType="STICKY_BALLOON" key="notification.group.important.name" />
-        <postStartupActivity implementation="uk.co.ben_gibson.git.link.listener.ApplicationStartupListener"/>
+        <postStartupActivity implementation="cn.alanhe.git.link.listener.ApplicationStartupListener"/>
         <vcsAnnotationGutterActionProvider
-            implementation="uk.co.ben_gibson.git.link.ui.extensions.AnnotationGutterActionProvider"/>
-        <selectInTarget implementation="uk.co.ben_gibson.git.link.ui.extensions.SelectInTarget"/>
+            implementation="cn.alanhe.git.link.ui.extensions.AnnotationGutterActionProvider"/>
+        <selectInTarget implementation="cn.alanhe.git.link.ui.extensions.SelectInTarget"/>
         <projectConfigurable
             parentId="tools"
-            instance="uk.co.ben_gibson.git.link.ui.settings.ProjectSettingsConfigurable"
+            instance="cn.alanhe.git.link.ui.settings.ProjectSettingsConfigurable"
             id="GitLink.ProjectSettings"
             displayName="Beautiful GitLink"
         />
         <applicationConfigurable
             parentId="GitLink.ProjectSettings"
-            instance="uk.co.ben_gibson.git.link.ui.settings.CustomPlatformSettingsConfigurable"
+            instance="cn.alanhe.git.link.ui.settings.CustomPlatformSettingsConfigurable"
             id="GitLink.CustomHostSettings"
             displayName="Platforms"
         />
         <applicationConfigurable
             parentId="GitLink.ProjectSettings"
-            instance="uk.co.ben_gibson.git.link.ui.settings.DomainRegistrySettings"
+            instance="cn.alanhe.git.link.ui.settings.DomainRegistrySettings"
             id="GitLink.AutoDetectSettings"
             displayName="Domain Registry"
         />
         <applicationConfigurable
             parentId="GitLink.ProjectSettings"
-            instance="uk.co.ben_gibson.git.link.ui.settings.OtherSettingsConfigurable"
+            instance="cn.alanhe.git.link.ui.settings.OtherSettingsConfigurable"
             id="GitLink.OtherSettings"
             displayName="Other Settings"
         />
@@ -45,8 +45,8 @@
             id="Code Snippet Preview"
             displayName="Code Snippet Preview"
             anchor="right"
-            factoryClass="uk.co.ben_gibson.git.link.ui.CodeSnippetPreviewToolWindowFactory"
-            icon="uk.co.ben_gibson.git.link.ui.Icons.GIT_LINK"
+            factoryClass="cn.alanhe.git.link.ui.CodeSnippetPreviewToolWindowFactory"
+            icon="cn.alanhe.git.link.ui.Icons.GIT_LINK"
         />
     </extensions>
 
@@ -55,8 +55,8 @@
 
     <actions>
         <action
-            id="uk.co.ben_gibson.git.link.ui.actions.menu.BrowserAction"
-            class="uk.co.ben_gibson.git.link.ui.actions.menu.BrowserAction"
+            id="cn.alanhe.git.link.ui.actions.menu.BrowserAction"
+            class="cn.alanhe.git.link.ui.actions.menu.BrowserAction"
         >
             <add-to-group group-id="Git.MainMenu" anchor="last"/>
             <add-to-group group-id="EditorPopupMenu"/>
@@ -66,8 +66,8 @@
             <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl O"/>
         </action>
         <action
-            id="uk.co.ben_gibson.git.link.ui.actions.menu.CopyAction"
-            class="uk.co.ben_gibson.git.link.ui.actions.menu.CopyAction"
+            id="cn.alanhe.git.link.ui.actions.menu.CopyAction"
+            class="cn.alanhe.git.link.ui.actions.menu.CopyAction"
         >
             <add-to-group group-id="Git.MainMenu" anchor="last"/>
             <add-to-group group-id="EditorPopupMenu"/>
@@ -77,72 +77,72 @@
             <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl C"/>
         </action>
         <!-- GitLink Others submenu group -->
-        <group id="GitLinkOthersGroup" class="uk.co.ben_gibson.git.link.ui.actions.menu.GitLinkOthersGroup" popup="true">
+        <group id="GitLinkOthersGroup" class="cn.alanhe.git.link.ui.actions.menu.GitLinkOthersGroup" popup="true">
             <add-to-group group-id="EditorPopupMenu"/>
             <action
-                id="uk.co.ben_gibson.git.link.ui.actions.menu.MarkdownAction.Others"
-                class="uk.co.ben_gibson.git.link.ui.actions.menu.MarkdownSubmenuAction"
+                id="cn.alanhe.git.link.ui.actions.menu.MarkdownAction.Others"
+                class="cn.alanhe.git.link.ui.actions.menu.MarkdownSubmenuAction"
             />
             <action
-                id="uk.co.ben_gibson.git.link.ui.actions.menu.CopyMarkdownSnippetAction"
-                class="uk.co.ben_gibson.git.link.ui.actions.menu.CopyMarkdownSnippetSubmenuAction"
+                id="cn.alanhe.git.link.ui.actions.menu.CopyMarkdownSnippetAction"
+                class="cn.alanhe.git.link.ui.actions.menu.CopyMarkdownSnippetSubmenuAction"
             />
             <action
-                id="uk.co.ben_gibson.git.link.ui.actions.menu.CreateGitHubSnippetImageAction"
-                class="uk.co.ben_gibson.git.link.ui.actions.menu.CreateGitHubSnippetImageSubmenuAction"
+                id="cn.alanhe.git.link.ui.actions.menu.CreateGitHubSnippetImageAction"
+                class="cn.alanhe.git.link.ui.actions.menu.CreateGitHubSnippetImageSubmenuAction"
             />
         </group>
 
         <!-- Keep MarkdownAction in other menus for backward compatibility -->
         <action
-            id="uk.co.ben_gibson.git.link.ui.actions.menu.MarkdownAction"
-            class="uk.co.ben_gibson.git.link.ui.actions.menu.MarkdownAction"
+            id="cn.alanhe.git.link.ui.actions.menu.MarkdownAction"
+            class="cn.alanhe.git.link.ui.actions.menu.MarkdownAction"
         >
             <add-to-group group-id="Git.MainMenu" anchor="last"/>
             <add-to-group group-id="ProjectViewPopupMenu"/>
             <add-to-group group-id="EditorTabPopupMenu"/>
         </action>
         <action
-            id="uk.co.ben_gibson.git.link.ui.actions.vcslog.BrowserAction"
-            class="uk.co.ben_gibson.git.link.ui.actions.vcslog.BrowserAction"
+            id="cn.alanhe.git.link.ui.actions.vcslog.BrowserAction"
+            class="cn.alanhe.git.link.ui.actions.vcslog.BrowserAction"
         >
             <add-to-group group-id="Git.LogContextMenu"/>
             <add-to-group group-id="Vcs.Log.ContextMenu"/>
             <add-to-group group-id="Vcs.FileHistory.ContextMenu"/>
         </action>
         <action
-            id="uk.co.ben_gibson.git.link.ui.actions.vcslog.CopyAction"
-            class="uk.co.ben_gibson.git.link.ui.actions.vcslog.CopyAction"
+            id="cn.alanhe.git.link.ui.actions.vcslog.CopyAction"
+            class="cn.alanhe.git.link.ui.actions.vcslog.CopyAction"
         >
             <add-to-group group-id="Git.LogContextMenu"/>
             <add-to-group group-id="Vcs.Log.ContextMenu"/>
             <add-to-group group-id="Vcs.FileHistory.ContextMenu"/>
         </action>
         <action
-            id="uk.co.ben_gibson.git.link.ui.actions.vcslog.MarkdownAction"
-            class="uk.co.ben_gibson.git.link.ui.actions.vcslog.MarkdownAction"
+            id="cn.alanhe.git.link.ui.actions.vcslog.MarkdownAction"
+            class="cn.alanhe.git.link.ui.actions.vcslog.MarkdownAction"
         >
             <add-to-group group-id="Git.LogContextMenu"/>
             <add-to-group group-id="Vcs.Log.ContextMenu"/>
             <add-to-group group-id="Vcs.FileHistory.ContextMenu"/>
         </action>
         <action
-            id="uk.co.ben_gibson.git.link.ui.actions.gutter.BrowserAction"
-            class="uk.co.ben_gibson.git.link.ui.actions.gutter.BrowserAction"
+            id="cn.alanhe.git.link.ui.actions.gutter.BrowserAction"
+            class="cn.alanhe.git.link.ui.actions.gutter.BrowserAction"
         >
             <add-to-group group-id="EditorGutterPopupMenu"/>
 
         </action>
         <action
-            id="uk.co.ben_gibson.git.link.ui.actions.gutter.CopyAction"
-            class="uk.co.ben_gibson.git.link.ui.actions.gutter.CopyAction"
+            id="cn.alanhe.git.link.ui.actions.gutter.CopyAction"
+            class="cn.alanhe.git.link.ui.actions.gutter.CopyAction"
         >
             <add-to-group group-id="EditorGutterPopupMenu"/>
 
         </action>
         <action
-            id="uk.co.ben_gibson.git.link.ui.actions.gutter.MarkdownAction"
-            class="uk.co.ben_gibson.git.link.ui.actions.gutter.MarkdownAction"
+            id="cn.alanhe.git.link.ui.actions.gutter.MarkdownAction"
+            class="cn.alanhe.git.link.ui.actions.gutter.MarkdownAction"
         >
             <add-to-group group-id="EditorGutterPopupMenu"/>
 

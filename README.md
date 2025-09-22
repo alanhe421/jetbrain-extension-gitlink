@@ -62,6 +62,13 @@ While this avoids generating a URL to a 404, it does mean the linked contents ca
   Download the [latest release](https://github.com/ben-gibson/GitLink/releases/latest) and install it manually using
   <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd>
 
+
+## Build 
+
+```shell
+./gradlew buildPlugin
+```
+
 ## Support
 
 * Star the repository

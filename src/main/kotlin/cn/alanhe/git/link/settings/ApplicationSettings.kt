@@ -1,0 +1,81 @@
+package cn.alanhe.git.link.settings
+
+import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.RoamingType
+import com.intellij.openapi.components.State
+import com.intellij.openapi.components.Storage
+import com.intellij.util.xmlb.XmlSerializerUtil
+import com.intellij.util.xmlb.annotations.Tag
+import uk.co.ben_gibson.url.Host
+import java.util.UUID
+
+/**
+ * Supports storing the application settings in a persistent way.
+ * The [State] and [Storage] annotations define the name of the data and the file name where
+ * these persistent application settings are stored.
+ *
+ * Settings are configured to sync across IDEs when JetBrains Settings Sync is enabled.
+ * Users can control sync participation through the enableSync setting.
+ */
+@State(name = "cn.alanhe.git.link.SettingsState", storages = [Storage(value = "GitLink.xml", roamingType = RoamingType.DEFAULT)])
+class ApplicationSettings : PersistentStateComponent<ApplicationSettings?> {
+    private var listeners: List<ChangeListener> = listOf()
+
+    var customHosts: List<CustomHostSettings> = listOf()
+        set(value) {
+            field = value
+            notifyListeners()
+        }
+
+    var customHostDomains: Map<String, Set<String>> = mapOf()
+
+    var lastVersion: String? = null
+    var hits = 0
+    var requestSupport = true
+    var useRemoteForCodeImage = true
+    var codeImageWatermark = ""
+
+    // Menu level settings as individual properties (nullable for binding)
+    var openInGitHubMenuLevel: MenuLevel? = MenuLevel.MENU
+    var copyGitHubLinkMenuLevel: MenuLevel? = MenuLevel.MENU
+    var copyGitHubMarkdownLinkMenuLevel: MenuLevel? = MenuLevel.SUBMENU
+    var copyGitHubMarkdownSnippetMenuLevel: MenuLevel? = MenuLevel.SUBMENU
+    var copyGitHubSnippetImageMenuLevel: MenuLevel? = MenuLevel.SUBMENU
+
+    override fun getState() = this
+
+    override fun loadState(state: ApplicationSettings) {
+        XmlSerializerUtil.copyBean(state, this)
+    }
+
+    @Tag("custom_hosts")
+    data class CustomHostSettings(
+        var id: String = UUID.randomUUID().toString(),
+        var displayName: String = "",
+        var baseUrl: String = "",
+        var fileAtBranchTemplate: String = "",
+        var fileAtCommitTemplate: String = "",
+        var commitTemplate: String = ""
+    )
+
+    fun findPlatformIdByCustomDomain(domain: Host) = customHostDomains
+        .entries
+        .firstOrNull { entry -> entry.value.contains(domain.toString()) }
+        ?.key
+
+    fun registerListener(listener: ChangeListener) {
+        listeners = listeners.plus(listener)
+    }
+
+    fun recordHit() {
+        hits++
+    }
+
+    private fun notifyListeners() {
+        listeners.forEach(ChangeListener::onChange)
+    }
+
+    interface ChangeListener {
+        fun onChange()
+    }
+}
