@@ -13,7 +13,7 @@ import org.jetbrains.annotations.PropertyKey
 private const val BUNDLE = "messages.MyBundle"
 
 object GitLinkBundle : DynamicBundle(BUNDLE) {
-    const val URL_BUG_REPORT = "https://github.com/ben-gibson/GitLink/issues"
+    const val URL_BUG_REPORT = "https://github.com/alanhe421/jetbrain-extension-gitlink/issues"
 
     @Suppress("SpreadOperator")
     @JvmStatic

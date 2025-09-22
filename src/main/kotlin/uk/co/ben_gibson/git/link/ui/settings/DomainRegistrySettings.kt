@@ -12,7 +12,6 @@ import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.table.TableView
 import com.intellij.util.ui.ColumnInfo
 import com.intellij.util.ui.ListTableModel
-import uk.co.ben_gibson.git.link.GitLinkBundle
 import uk.co.ben_gibson.git.link.GitLinkBundle.message
 import uk.co.ben_gibson.git.link.platform.Platform
 import uk.co.ben_gibson.git.link.platform.PlatformRepository
@@ -68,9 +67,6 @@ class DomainRegistrySettings : BoundConfigurable(message("settings.domain-regist
         row {
             cell(domainsTableContainer)
                 .align(Align.FILL)
-        }
-        row {
-            browserLink(message("actions.report-bug.title"), GitLinkBundle.URL_BUG_REPORT)
         }
     }
 

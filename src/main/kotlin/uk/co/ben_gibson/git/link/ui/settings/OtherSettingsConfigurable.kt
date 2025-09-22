@@ -6,7 +6,6 @@ import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.bindItem
 import com.intellij.ui.dsl.builder.panel
-import uk.co.ben_gibson.git.link.GitLinkBundle
 import uk.co.ben_gibson.git.link.GitLinkBundle.message
 import uk.co.ben_gibson.git.link.settings.ApplicationSettings
 import uk.co.ben_gibson.git.link.settings.MenuLevel
@@ -58,9 +57,6 @@ class OtherSettingsConfigurable : BoundConfigurable(message("settings.other.grou
             row {
                 text("Note: Changes will take effect after restarting the IDE.")
             }
-        }
-        row {
-            browserLink(message("actions.report-bug.title"), GitLinkBundle.URL_BUG_REPORT)
         }
     }
 }

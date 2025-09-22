@@ -10,7 +10,6 @@ import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.table.TableView
 import com.intellij.util.ui.ColumnInfo
 import com.intellij.util.ui.ListTableModel
-import uk.co.ben_gibson.git.link.GitLinkBundle
 import uk.co.ben_gibson.git.link.settings.ApplicationSettings
 import uk.co.ben_gibson.git.link.settings.ApplicationSettings.CustomHostSettings
 import javax.swing.ListSelectionModel.SINGLE_SELECTION
@@ -40,9 +39,6 @@ class CustomPlatformSettingsConfigurable : BoundConfigurable(message("settings.c
         row {
             cell(tableContainer)
                 .align(Align.FILL)
-        }
-        row {
-            browserLink(message("actions.report-bug.title"), GitLinkBundle.URL_BUG_REPORT)
         }
     }
 
