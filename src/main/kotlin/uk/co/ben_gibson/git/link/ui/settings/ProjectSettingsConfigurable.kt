@@ -36,22 +36,6 @@ class ProjectSettingsConfigurable(project : Project) : BoundConfigurable(message
                 .comment(message("settings.general.field.fallback-branch.help"))
                 .validationOnApply { notBlank(it.text) }
         }
-        row(message("settings.general.field.remote.label")) {
-            textField()
-                .bindText(settings::remote)
-                .validationOnApply { notBlank(it.text) }
-        }
-        group(message("settings.general.section.advanced.label")) {
-            row {
-                checkBox(message("settings.general.field.force-https.label"))
-                    .bindSelected(settings::forceHttps)
-            }
-            row {
-                checkBox(message("settings.general.field.should-check-remote.label"))
-                    .comment(message("settings.general.field.check-commit-on-remote.help"))
-                    .bindSelected(settings::shouldCheckRemote)
-            }
-        }
         row {
             browserLink(message("actions.report-bug.title"), GitLinkBundle.URL_BUG_REPORT)
         }
