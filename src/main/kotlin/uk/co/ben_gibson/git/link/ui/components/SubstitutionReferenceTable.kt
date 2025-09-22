@@ -1,8 +1,16 @@
 package uk.co.ben_gibson.git.link.ui.components
 
+import com.intellij.openapi.ide.CopyPasteManager
+import com.intellij.openapi.util.SystemInfoRt
 import com.intellij.ui.table.TableView
 import com.intellij.util.ui.ColumnInfo
+import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.ListTableModel
+import java.awt.datatransfer.StringSelection
+import java.awt.event.ActionEvent
+import java.awt.Dimension
+import javax.swing.AbstractAction
+import javax.swing.KeyStroke
 
 private val references = listOf(
     SubstitutionReference(
@@ -62,7 +70,7 @@ private val references = listOf(
     ),
 )
 
-class SubstitutionReferenceTable: TableView<SubstitutionReference>(
+class SubstitutionReferenceTable : TableView<SubstitutionReference>(
     ListTableModel(
         arrayOf(
             SubstitutionColumnInfo("Substitution") { it.substitution },
@@ -71,7 +79,46 @@ class SubstitutionReferenceTable: TableView<SubstitutionReference>(
         ),
         references
     )
-)
+) {
+
+    init {
+        // Enable standard copy shortcut so users can reuse substitution strings in templates
+        setupCopyHandler()
+
+        val defaultWidth = preferredScrollableViewportSize.width.takeIf { it > 0 } ?: JBUI.scale(520)
+        preferredScrollableViewportSize = Dimension(defaultWidth, JBUI.scale(260))
+    }
+
+    private fun setupCopyHandler() {
+        val modifiers = if (SystemInfoRt.isMac) java.awt.event.KeyEvent.META_DOWN_MASK else java.awt.event.KeyEvent.CTRL_DOWN_MASK
+        val copyKeyStroke = KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, modifiers)
+
+        getInputMap(WHEN_FOCUSED).put(copyKeyStroke, COPY_ACTION)
+        actionMap.put(COPY_ACTION, object : AbstractAction() {
+            override fun actionPerformed(event: ActionEvent?) {
+                val rows = selectedRows
+                if (rows.isEmpty()) {
+                    return
+                }
+
+                val values = rows
+                    .map { row -> getValueAt(row, SUBSTITUTION_COLUMN_INDEX)?.toString() }
+                    .filterNotNull()
+
+                if (values.isEmpty()) {
+                    return
+                }
+
+                CopyPasteManager.getInstance().setContents(StringSelection(values.joinToString(System.lineSeparator())))
+            }
+        })
+    }
+
+    companion object {
+        private const val COPY_ACTION = "substitutionCopy"
+        private const val SUBSTITUTION_COLUMN_INDEX = 0
+    }
+}
 
 private class SubstitutionColumnInfo(name: String, val formatter: (SubstitutionReference) -> String) :
     ColumnInfo<SubstitutionReference, String>(name) {
