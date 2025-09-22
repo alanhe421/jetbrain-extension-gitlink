@@ -35,6 +35,13 @@ class ApplicationSettings : PersistentStateComponent<ApplicationSettings?> {
     var useRemoteForCodeImage = true
     var codeImageWatermark = ""
 
+    // Menu level settings as individual properties (nullable for binding)
+    var openInGitHubMenuLevel: MenuLevel? = MenuLevel.MENU
+    var copyGitHubLinkMenuLevel: MenuLevel? = MenuLevel.MENU
+    var copyGitHubMarkdownLinkMenuLevel: MenuLevel? = MenuLevel.SUBMENU
+    var copyGitHubMarkdownSnippetMenuLevel: MenuLevel? = MenuLevel.SUBMENU
+    var copyGitHubSnippetImageMenuLevel: MenuLevel? = MenuLevel.SUBMENU
+
     override fun getState() = this
 
     override fun loadState(state: ApplicationSettings) {

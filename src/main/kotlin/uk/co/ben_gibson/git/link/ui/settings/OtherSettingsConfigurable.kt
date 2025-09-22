@@ -4,10 +4,12 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.bindText
+import com.intellij.ui.dsl.builder.bindItem
 import com.intellij.ui.dsl.builder.panel
 import uk.co.ben_gibson.git.link.GitLinkBundle
 import uk.co.ben_gibson.git.link.GitLinkBundle.message
 import uk.co.ben_gibson.git.link.settings.ApplicationSettings
+import uk.co.ben_gibson.git.link.settings.MenuLevel
 
 class OtherSettingsConfigurable : BoundConfigurable(message("settings.other.group.title")) {
 
@@ -24,6 +26,37 @@ class OtherSettingsConfigurable : BoundConfigurable(message("settings.other.grou
                 textField()
                     .bindText(settings::codeImageWatermark)
                     .comment("Watermark for code snippet images. Leave empty for no watermark.")
+            }
+        }
+
+        group("Menu Organization") {
+            row("Open in GitHub:") {
+                comboBox(MenuLevel.values().toList())
+                    .bindItem(settings::openInGitHubMenuLevel)
+                    .comment("MENU = main menu, SUBMENU = GitLink Others submenu")
+            }
+            row("Copy GitHub Link:") {
+                comboBox(MenuLevel.values().toList())
+                    .bindItem(settings::copyGitHubLinkMenuLevel)
+                    .comment("MENU = main menu, SUBMENU = GitLink Others submenu")
+            }
+            row("Copy GitHub Markdown Link:") {
+                comboBox(MenuLevel.values().toList())
+                    .bindItem(settings::copyGitHubMarkdownLinkMenuLevel)
+                    .comment("MENU = main menu, SUBMENU = GitLink Others submenu")
+            }
+            row("Copy GitHub Markdown Snippet:") {
+                comboBox(MenuLevel.values().toList())
+                    .bindItem(settings::copyGitHubMarkdownSnippetMenuLevel)
+                    .comment("MENU = main menu, SUBMENU = GitLink Others submenu")
+            }
+            row("Copy GitHub Snippet Image:") {
+                comboBox(MenuLevel.values().toList())
+                    .bindItem(settings::copyGitHubSnippetImageMenuLevel)
+                    .comment("MENU = main menu, SUBMENU = GitLink Others submenu")
+            }
+            row {
+                text("Note: Changes will take effect after restarting the IDE.")
             }
         }
         row {

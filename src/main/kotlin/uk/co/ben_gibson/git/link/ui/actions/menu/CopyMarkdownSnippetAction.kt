@@ -19,7 +19,14 @@ import uk.co.ben_gibson.git.link.ui.notification.sendNotification
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 
-class CopyMarkdownSnippetAction : DumbAwareAction() {
+open class CopyMarkdownSnippetAction @JvmOverloads constructor(
+    private val placement: Placement = Placement.MAIN,
+) : DumbAwareAction() {
+
+    enum class Placement {
+        MAIN,
+        SUBMENU,
+    }
 
     override fun actionPerformed(event: AnActionEvent) {
         val project = event.project ?: return
@@ -91,6 +98,12 @@ class CopyMarkdownSnippetAction : DumbAwareAction() {
                 event.presentation.icon = host.icon
             }
         }
+
+        if (placement == Placement.MAIN &&
+            !MenuLevelChecker.shouldShowInMainMenu(event, MenuLevelChecker.ActionType.COPY_GITHUB_MARKDOWN_SNIPPET)
+        ) {
+            event.presentation.isEnabledAndVisible = false
+        }
     }
 
     private fun isMultiLineSelection(editor: com.intellij.openapi.editor.Editor?): Boolean {
@@ -146,3 +159,5 @@ class CopyMarkdownSnippetAction : DumbAwareAction() {
         return ActionUpdateThread.BGT
     }
 }
+
+class CopyMarkdownSnippetSubmenuAction : CopyMarkdownSnippetAction(Placement.SUBMENU)

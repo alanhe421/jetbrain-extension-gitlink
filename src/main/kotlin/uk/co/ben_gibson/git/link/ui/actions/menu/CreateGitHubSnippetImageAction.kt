@@ -20,7 +20,14 @@ import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.*
 
-class CreateGitHubSnippetImageAction : DumbAwareAction() {
+open class CreateGitHubSnippetImageAction @JvmOverloads constructor(
+    private val placement: Placement = Placement.MAIN,
+) : DumbAwareAction() {
+
+    enum class Placement {
+        MAIN,
+        SUBMENU,
+    }
 
     override fun actionPerformed(event: AnActionEvent) {
         val project = event.project ?: return
@@ -63,6 +70,12 @@ class CreateGitHubSnippetImageAction : DumbAwareAction() {
             if (host != null) {
                 event.presentation.icon = host.icon
             }
+        }
+
+        if (placement == Placement.MAIN &&
+            !MenuLevelChecker.shouldShowInMainMenu(event, MenuLevelChecker.ActionType.COPY_GITHUB_SNIPPET_IMAGE)
+        ) {
+            event.presentation.isEnabledAndVisible = false
         }
     }
 
@@ -162,3 +175,5 @@ class CreateGitHubSnippetImageAction : DumbAwareAction() {
         return ActionUpdateThread.BGT
     }
 }
+
+class CreateGitHubSnippetImageSubmenuAction : CreateGitHubSnippetImageAction(Placement.SUBMENU)

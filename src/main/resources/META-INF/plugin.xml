@@ -81,15 +81,15 @@
             <add-to-group group-id="EditorPopupMenu"/>
             <action
                 id="uk.co.ben_gibson.git.link.ui.actions.menu.MarkdownAction.Others"
-                class="uk.co.ben_gibson.git.link.ui.actions.menu.MarkdownAction"
+                class="uk.co.ben_gibson.git.link.ui.actions.menu.MarkdownSubmenuAction"
             />
             <action
                 id="uk.co.ben_gibson.git.link.ui.actions.menu.CopyMarkdownSnippetAction"
-                class="uk.co.ben_gibson.git.link.ui.actions.menu.CopyMarkdownSnippetAction"
+                class="uk.co.ben_gibson.git.link.ui.actions.menu.CopyMarkdownSnippetSubmenuAction"
             />
             <action
                 id="uk.co.ben_gibson.git.link.ui.actions.menu.CreateGitHubSnippetImageAction"
-                class="uk.co.ben_gibson.git.link.ui.actions.menu.CreateGitHubSnippetImageAction"
+                class="uk.co.ben_gibson.git.link.ui.actions.menu.CreateGitHubSnippetImageSubmenuAction"
             />
         </group>
 
